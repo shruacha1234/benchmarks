@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 #
 # Copyright (c) 2020, 2021 Red Hat, IBM Corporation and others.
 #
@@ -14,19 +14,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-if [ $# -ne 2 ]; then
-	echo "Usage: $0 IP PORT"
-	exit 1
-fi
+### Script to build docker image for galaxies application ###
 
-export IP=$1
-export PORT=$2
+CURRENT_DIR="$(dirname "$(realpath "$0")")"
+source ${CURRENT_DIR}/galaxies-common.sh
 
-for USERS in 1 5 10 15 20 25 30 35 40
-do
-	echo "Runnning with ${USERS} users"
-	for run in {1..2}
-	do
-		wrk --threads=${USERS} --connections=${USERS} -d60s http://${IP}:${PORT}/galaxies;
-	done
-done
+# Check if docker and docker-compose are installed
+echo -n "Checking prereqs..."
+check_prereq
+echo "done"
+
+# Get the IP of the current box
+get_ip
+
+# Build the galaxies application sources and create the docker image
+echo -n "Building galaxies application..."
+build_galaxies
+echo "done"
+
+

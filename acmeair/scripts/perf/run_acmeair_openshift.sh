@@ -21,10 +21,11 @@
 # Ex of ARGS :  -s wobbled.os.fyre.ibm.com default -e /acmeair/results -u 400 -d 300 -w 5 -m 3
 
 CURRENT_DIR="$(dirname "$(realpath "$0")")"
-pushd "${CURRENT_DIR}" >> setup.log
-pushd ".." >> setup.log
-SCRIPT_REPO=${PWD}
-pushd ".." >> setup.log
+pushd "${CURRENT_DIR}" >> /dev/null
+pushd "${CURRENT_DIR}/../../.." >> /dev/null
+SCRIPT_REPO="${PWD}/common_utils"
+popd >> /dev/null
+
 JMX_FILE="${PWD}/jmeter-driver/acmeair-jmeter/scripts/AcmeAir.jmx"
 ACMEAIR_DEFAULT_IMAGE="dinogun/acmeair-monolithic"
 LOG_FILE="${PWD}/logs/jmeter.log"
@@ -516,7 +517,7 @@ function runItr()
 		check_app
 		echo "##### ${TYPE} ${run}" >> setup.log
 		# Get CPU and MEM info through prometheus queries
-		${SCRIPT_REPO}/perf/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} acmeair &
+		${SCRIPT_REPO}/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} acmeair &
 		# Run the jmeter workload
 		run_jmeter_with_scaling ${RESULTS_runItr} ${TYPE} ${run} ${SCALING}
 		# Sleep till the jmeter load completes

@@ -19,11 +19,12 @@
 
 CURRENT_DIR="$(dirname "$(realpath "$0")")"
 pushd "${CURRENT_DIR}" > /dev/null
-pushd ".." > /dev/null
-SCRIPT_REPO=${PWD}
+pushd "${CURRENT_DIR}/../../.." >> /dev/null
+SCRIPT_REPO="${PWD}/common_utils"
 
 CLUSTER_TYPE="openshift"
-pushd ".." > /dev/null
+pushd "galaxies" > /dev/null
+echo "${PWD}"
 HYPERFOIL_DIR="${PWD}/hyperfoil-0.13/bin"
 GALAXIES_DEFAULT_IMAGE="dinogun/galaxies:1.2-jdk-11.0.10_9"
 
@@ -197,8 +198,9 @@ function run_wrk_workload() {
 	echo "Running wrk load with the following parameters" >> setup.log
 	cmd="${HYPERFOIL_DIR}/wrk2.sh --threads=${WRK_LOAD_USERS} --connections=1000 --duration=${WRK_LOAD_DURATION}s --rate=${REQUEST_RATE} http://${IP_ADDR}/galaxies"
 	echo "CMD = ${cmd}" >> setup.log
+	sleep 30
 	${cmd} > ${RESULTS_LOG}
-	sleep 20
+	sleep 60
 }
 
 # Run the wrk load on each instace of the application
@@ -507,7 +509,7 @@ function runItr()
 		check_app
 		echo "##### ${TYPE} ${run}" >> setup.log
 		# Get CPU and MEM info through prometheus queries
-		${SCRIPT_REPO}/perf/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} galaxies &
+		${SCRIPT_REPO}/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} galaxies &
 		# Run the wrk workload
 		run_wrk_with_scaling ${RESULTS_runItr} ${TYPE} ${run}
 		# Sleep till the wrk load completes

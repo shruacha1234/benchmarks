@@ -18,9 +18,10 @@
 #
 
 CURRENT_DIR="$(dirname "$(realpath "$0")")"
-pushd "${CURRENT_DIR}" >> setup.log
-pushd ".." >> setup.log
-SCRIPT_REPO=${PWD}
+pushd "${CURRENT_DIR}" >> /dev/null
+pushd "${CURRENT_DIR}/../../.." >> /dev/null
+SCRIPT_REPO="${PWD}/common_utils"
+popd >> /dev/null
 
 CLUSTER_TYPE="openshift"
 PETCLINIC_DEFAULT_IMAGE="kruize/spring_petclinic:2.2.0-jdk-11.0.8-openj9-0.21.0"
@@ -486,7 +487,7 @@ function runItr()
 		check_app
 		echo "##### ${TYPE} ${run}">> setup.log
 		# Get CPU and MEM info through prometheus queries
-		${SCRIPT_REPO}/perf/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} petclinic &
+		${SCRIPT_REPO}/getstats-openshift.sh ${TYPE}-${run} ${CPU_MEM_DURATION} ${RESULTS_runItr} ${BENCHMARK_SERVER} petclinic &
 		# Run the jmeter workload
 		run_jmeter_with_scaling ${RESULTS_runItr} ${TYPE} ${run}
 		# Sleep till the jmeter load completes

@@ -46,12 +46,16 @@ do
 				;;
 			memreq=*)
 				MEM_REQ=${OPTARG#*=}
+				# check memory request for unit
+				check_memory_unit ${MEM_REQ}
 				;;
 			cpulim=*)
 				CPU_LIM=${OPTARG#*=}
 				;;
 			memlim=*)
 				MEM_LIM=${OPTARG#*=}
+				# check memory limit for unit
+				check_memory_unit ${MEM_LIM}
 				;;
 			*)
 		esac
@@ -114,13 +118,6 @@ function check_memory_unit() {
 			;;
 	esac
 }
-
-
-# check memory request for unit
-check_memory_unit ${MEM_REQ}
-
-# check memory limit for unit
-check_memory_unit ${MEM_LIM}
 
 set_port ${PETCLINIC_IMAGE}
 
